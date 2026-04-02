@@ -53,6 +53,9 @@ SNR Management: Analyzed the Signal-to-Noise Ratio (SNR) limitations of passive 
 
 Timing Optimization: Balanced the I2C bus speed with the ADC sampling rate to ensure a jitter-free waveform display.
 
+For the circuit:
+https://drive.google.com/file/d/1YvWasJF9r-K2rPrb3NBhn1-jW358Vqgc/view?usp=sharing
+
 For the video: 
 https://drive.google.com/file/d/1i4VS3BvGQo7P7t75VjLHtIJPYrasT4gu/view?usp=sharing
 
