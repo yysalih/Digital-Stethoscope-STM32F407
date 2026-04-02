@@ -18,6 +18,7 @@ Filtering: Implemented a software-based Exponential Moving Average (EMA) filter 
 
 Hysteresis & Peak Detection: Developed a robust thresholding algorithm with software hysteresis to calculate BPM (Beats Per Minute) from low-amplitude ($<20mV$) signals.
 
+
 3. Embedded UI & Visualization:
 OLED Driver: Developed a custom low-level driver for the SSD1306 (I2C) display.
 
@@ -51,3 +52,9 @@ Challenges & Lessons Learned:
 SNR Management: Analyzed the Signal-to-Noise Ratio (SNR) limitations of passive sensing. Without an active Op-Amp stage, software-side stabilization (Hysteresis) was critical to prevent false-positive peak detection.
 
 Timing Optimization: Balanced the I2C bus speed with the ADC sampling rate to ensure a jitter-free waveform display.
+
+For the video: 
+https://drive.google.com/file/d/1i4VS3BvGQo7P7t75VjLHtIJPYrasT4gu/view?usp=sharing
+
+![3](https://github.com/user-attachments/assets/fb385d19-c688-4039-a64f-30da6ffc1ea4)
+![1](https://github.com/user-attachments/assets/1cf5c3da-62af-49a4-a140-83979e268c24)
