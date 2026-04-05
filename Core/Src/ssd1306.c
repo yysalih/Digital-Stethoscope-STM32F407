@@ -19,13 +19,13 @@ static SSD1306_t SSD1306;
 
 
 void ssd1306_WriteCommand(I2C_HandleTypeDef *hi2c, uint8_t data) {
-    // HAL_I2C_Mem_Write sends the Register/Control byte (0x00) for you
+
     HAL_I2C_Mem_Write(hi2c, SSD1306_I2C_ADDR << 1, 0x00, 1, &data, 1, 100);
 }
 
 void ssd1306_UpdateScreen(I2C_HandleTypeDef *hi2c) {
     // 0x40 is the "Data" control byte for SSD1306
-    // We use Mem_Write_DMA to send the whole 1024 byte buffer
+
 	if (hi2c->State == HAL_I2C_STATE_READY) {
 		HAL_I2C_Mem_Write_DMA(hi2c, SSD1306_I2C_ADDR << 1, 0x40, 1, SSD1306_Buffer, 1024);
 	}
@@ -35,9 +35,7 @@ void ssd1306_DrawPixel(uint8_t x, uint8_t y, uint8_t color) {
     if(x >= 128 || y >= 64) return;
 
     if(color) {
-        // Find the byte in the buffer and set the specific bit
-        // y >> 3 is the same as y / 8 (finding the page)
-        // y & 0x07 is the same as y % 8 (finding the bit in that page)
+
         SSD1306_Buffer[x + (y >> 3) * 128] |= (1 << (y & 0x07));
     } else {
         SSD1306_Buffer[x + (y >> 3) * 128] &= ~(1 << (y & 0x07));
@@ -45,10 +43,8 @@ void ssd1306_DrawPixel(uint8_t x, uint8_t y, uint8_t color) {
 }
 
 void ssd1306_Init(I2C_HandleTypeDef *hi2c) {
-    // 1. Wait for the screen to boot up
     HAL_Delay(100);
 
-    // 2. Initialization Sequence
     ssd1306_WriteCommand(hi2c, 0xAE); // Display OFF
 
     ssd1306_WriteCommand(hi2c, 0x20); // Set Memory Addressing Mode
@@ -94,8 +90,7 @@ void ssd1306_Init(I2C_HandleTypeDef *hi2c) {
 
     ssd1306_WriteCommand(hi2c, 0xAF); // Display ON
 
-    // 3. Clear the screen initially
-    memset(SSD1306_Buffer, 0, 1024);
+    memset(SSD1306_Buffer, 0, 1024); // Clear screen
     ssd1306_UpdateScreen(hi2c);
 }
 

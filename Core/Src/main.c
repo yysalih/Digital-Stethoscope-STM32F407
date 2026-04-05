@@ -60,7 +60,7 @@ TIM_HandleTypeDef htim2;
 uint32_t last_beat_time = 0;
 uint16_t current_bpm = 0;
 uint8_t beat_lockout = 0;
-uint32_t beat_intervals[4] = {0, 0, 0, 0}; // Store last 4 pulse durations
+uint32_t beat_intervals[4] = {0, 0, 0, 0};
 uint8_t beat_index = 0;
 uint16_t display_bpm = 0;
 
@@ -109,11 +109,9 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc) {
     if(hadc->Instance == ADC1) {
         int sample_count = 0;
 
-        // We must process ALL 1000 samples to keep the filter smooth
         for(int i = 0; i < 1000; i++) {
             Process_Heartbeat(heart_buffer[i]);
 
-            // Every 7th or 8th sample, save it to the 128-slot array
             if (i % 7 == 0 && sample_count < 128) {
                 processed_samples[sample_count] = (uint16_t)filtered_value;
                 sample_count++;
@@ -186,6 +184,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
+	  //Sample drawing and calculating start -------------------------------------
 	  int32_t sum = 0;
 	  for(int i=0; i<128; i++) sum += processed_samples[i];
 	  current_center = sum / 128;
@@ -207,28 +207,28 @@ int main(void)
 
 	  	ssd1306_DrawPixel(x, (uint8_t)y_plot, 1);
       }
+	  //Sample drawing and calculating end -----------------------------------------
 
-
+	  //BPM Counter Start -------------------------------------
 	  if (HAL_GetTick() - last_beat_time > 3000) {
 	      current_bpm = 0;
 	  }
 
-	  // 2. TRIGGER: Signal must go ABOVE 8 (higher than your noise)
+
 	  if (centered > 8 && beat_lockout == 0) {
 	      uint32_t now = HAL_GetTick();
 	      uint32_t duration = now - last_beat_time;
 
-	      // Standard heart rate filter (30 BPM to 150 BPM)
 	      if (duration > 400 && duration < 2000) {
 	          current_bpm = 60000 / duration;
 	          last_beat_time = now;
-	          beat_lockout = 1; // LOCK IT
+	          beat_lockout = 1;
+
 	          HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
 	      }
 	  }
 
-	  // 3. RESET: Signal must go BELOW 3 to "Arm" the trigger again
-	  // This "Gap" between 8 and 3 is what makes it stable!
+
 	  if (centered < 3) {
 	      beat_lockout = 0;
 	  }
@@ -237,6 +237,7 @@ int main(void)
 	  sprintf(bpm_str, "~ %d", current_bpm);
 	  ssd1306_SetCursor(0, 0); // Top Left
 	  ssd1306_WriteString(bpm_str, Font_7x10, 1);
+	  //BPM Counter End ------------------------------------------
 
 	  char zoom_str[10];
 	  sprintf(zoom_str, "x%d", current_gain);
